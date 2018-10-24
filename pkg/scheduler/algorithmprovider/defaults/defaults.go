@@ -101,6 +101,9 @@ func init() {
 		priorities.RequestedToCapacityRatioResourceAllocationPriorityDefault().PriorityMap,
 		nil,
 		1)
+	//Optional, resource bin packing allows bin packing for extended resources as well
+	factory.RegisterPriorityFunction2(
+		"ResourceBinPackingPriority", priorities.ResourceBinPackingPriorityDefault().ResourceBinPackingPriorityMap, nil, 1)
 }
 
 func defaultPredicates() sets.String {

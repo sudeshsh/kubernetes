@@ -332,6 +332,18 @@ func RegisterCustomPriorityFunction(policy schedulerapi.PriorityPolicy) string {
 				},
 				Weight: policy.Weight,
 			}
+		} else if policy.Argument.ResourceBinPacking != nil {
+			pcf = &PriorityConfigFactory{
+				MapReduceFunction: func(args PluginFactoryArgs) (algorithm.PriorityMapFunction, algorithm.PriorityReduceFunction) {
+					res := make([]priorities.Resources, len(policy.Argument.ResourceBinPacking.Resources))
+					for i, elm := range policy.Argument.ResourceBinPacking.Resources {
+						res[i].Resource = elm.Resource
+						res[i].Weight = elm.Weight
+					}
+					return priorities.NewResourceBinPacking(res)
+				},
+				Weight: policy.Weight,
+			}
 		}
 	} else if existingPcf, ok := priorityFunctionMap[policy.Name]; ok {
 		glog.V(2).Infof("Priority type %s already registered, reusing.", policy.Name)
@@ -518,6 +530,9 @@ func validatePriorityOrDie(priority schedulerapi.PriorityPolicy) {
 			numArgs++
 		}
 		if priority.Argument.RequestedToCapacityRatioArguments != nil {
+			numArgs++
+		}
+		if priority.Argument.ResourceBinPacking != nil {
 			numArgs++
 		}
 		if numArgs != 1 {
