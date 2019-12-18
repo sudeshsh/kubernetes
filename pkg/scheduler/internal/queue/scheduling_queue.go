@@ -220,7 +220,7 @@ func NewPriorityQueue(
 	}
 
 	comp := activeQComp
-	if fwk != nil {
+	/*if fwk != nil {
 		if queueSortFunc := fwk.QueueSortFunc(); queueSortFunc != nil {
 			comp = func(podInfo1, podInfo2 interface{}) bool {
 				pInfo1 := podInfo1.(*framework.PodInfo)
@@ -229,13 +229,13 @@ func NewPriorityQueue(
 				return queueSortFunc(pInfo1, pInfo2)
 			}
 		}
-	}
+	}*/
 
 	pq := &PriorityQueue{
 		clock:            options.clock,
 		stop:             make(chan struct{}),
 		podBackoff:       NewPodBackoffMap(options.podInitialBackoffDuration, options.podMaxBackoffDuration),
-		activeQ:          heap.NewWithRecorder(podInfoKeyFunc, comp, metrics.NewActivePodsRecorder()),
+		activeQ:          heap.NewWithRecorder(podInfoKeyFunc,comp, metrics.NewActivePodsRecorder()),
 		unschedulableQ:   newUnschedulablePodsMap(metrics.NewUnschedulablePodsRecorder()),
 		nominatedPods:    newNominatedPodMap(),
 		moveRequestCycle: -1,
